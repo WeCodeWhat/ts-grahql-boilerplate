@@ -8,12 +8,12 @@ import {
 import { v4 as uuidv4 } from "uuid";
 @Entity()
 export class User extends BaseEntity {
-	@PrimaryColumn("uuid") id: string;
+	@PrimaryColumn("uuid", { nullable: false }) id: string;
 
-	@Column("varchar", { length: 255 })
+	@Column("varchar", { length: 255, nullable: true })
 	email: string;
 
-	@Column("text") password: string;
+	@Column("text", { nullable: true }) password: string;
 
 	@BeforeInsert()
 	addId() {
