@@ -3,6 +3,7 @@ import * as bcrypt from "bcryptjs";
 import { User } from "../../entity/User";
 import * as Yup from "yup";
 import { formatYupErrors } from "../../utils/formatYupErrors";
+import { ErrorMessages } from "./errorMessage";
 
 const validateSchema = Yup.object().shape({
 	email: Yup.string().min(3).max(255).email(),
@@ -26,7 +27,7 @@ export const resolvers: ResolverMap = {
 				return [
 					{
 						path: "email",
-						message: "already taken",
+						message: ErrorMessages.duplicateEmail,
 					},
 				];
 			}
