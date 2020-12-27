@@ -11,7 +11,7 @@ import { v4 as uuidv4 } from "uuid";
 export class User extends BaseEntity {
 	@PrimaryColumn("uuid", { nullable: false }) id: string;
 
-	@Column("varchar", { length: 255, nullable: true })
+	@Column("varchar", { length: 255, nullable: true, unique: true })
 	email: string;
 
 	@Column("text", { nullable: true }) password: string;
