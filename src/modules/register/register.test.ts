@@ -27,44 +27,49 @@ const mutation = (e: string, p: string) => `
     }
 `;
 
-test("Register user", async () => {
-	const res = await req(getHost(), mutation(email, password));
-	expect(res).toStrictEqual({ register: null });
-	const users = await User.find({ where: { email } });
-	expect(users).toHaveLength(1);
-	const user = users?.[0];
-	expect(user.email).toEqual(email);
-	expect(user.password).not.toEqual(password);
-});
+describe("Register user", () => {
+	test("Register user to the database", async () => {
+		const res = await req(getHost(), mutation(email, password));
+		expect(res).toStrictEqual({ register: null });
+		const users = await User.find({ where: { email } });
+		expect(users).toHaveLength(1);
+		const user = users?.[0];
+		expect(user.email).toEqual(email);
+		expect(user.password).not.toEqual(password);
+	});
+	describe("Validate the register input", () => {
+		test("Check for the email length", async () => {
+			expect((await req(getHost(), mutation("b", password))).register).toEqual([
+				{ message: ErrorMessages.emailNotLongEnough, path: "email" },
+				{ message: ErrorMessages.invalidEmail, path: "email" },
+			]);
+		});
 
-test("Email length", async () => {
-	expect((await req(getHost(), mutation("b", password))).register).toEqual([
-		{ message: ErrorMessages.emailNotLongEnough, path: "email" },
-		{ message: ErrorMessages.invalidEmail, path: "email" },
-	]);
-});
+		test("Check for the password length", async () => {
+			expect(
+				(await req(getHost(), mutation(faker.internet.email(), "1"))).register
+			).toEqual([
+				{ path: "password", message: ErrorMessages.passwordNotLongEnough },
+			]);
+		});
 
-test("Password length", async () => {
-	expect(
-		(await req(getHost(), mutation(faker.internet.email(), "1"))).register
-	).toEqual([
-		{ path: "password", message: ErrorMessages.passwordNotLongEnough },
-	]);
-});
+		test("Check for the email uniqueness", async () => {
+			expect(
+				(await req(getHost(), mutation(email, password))).register
+			).toEqual([
+				{
+					path: "email",
+					message: ErrorMessages.duplicateEmail,
+				},
+			]);
+		});
 
-test("Email uniqueness", async () => {
-	expect((await req(getHost(), mutation(email, password))).register).toEqual([
-		{
-			path: "email",
-			message: ErrorMessages.duplicateEmail,
-		},
-	]);
-});
-
-test("Email valid", async () => {
-	expect((await req(getHost(), mutation("abc", password))).register).toEqual([
-		{ path: "email", message: ErrorMessages.invalidEmail },
-	]);
+		test("Check for the validation of email", async () => {
+			expect(
+				(await req(getHost(), mutation("abc", password))).register
+			).toEqual([{ path: "email", message: ErrorMessages.invalidEmail }]);
+		});
+	});
 });
 
 afterAll(async () => await conn?.close());
