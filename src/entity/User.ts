@@ -20,4 +20,7 @@ export class User extends BaseEntity {
 	addId() {
 		this.id = uuidv4();
 	}
+
+	@Column("boolean", { default: true })
+	confirmed: boolean;
 }

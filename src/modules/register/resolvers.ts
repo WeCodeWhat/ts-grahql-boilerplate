@@ -4,6 +4,7 @@ import { User } from "../../entity/User";
 import * as Yup from "yup";
 import { formatYupErrors } from "../../utils/formatYupErrors";
 import { ErrorMessages } from "./errorMessage";
+import { createConfirmedEmailLink } from "../../services/emailService";
 
 const validateSchema = Yup.object().shape({
 	email: Yup.string().min(3).max(255).email(),
@@ -12,7 +13,11 @@ const validateSchema = Yup.object().shape({
 
 export const resolvers: ResolverMap = {
 	Mutation: {
-		register: async (_: any, args: GQL.IRegisterOnMutationArguments) => {
+		register: async (
+			_: any,
+			args: GQL.IRegisterOnMutationArguments,
+			{ redis, url }
+		) => {
 			const { email, password } = args;
 			try {
 				await validateSchema.validate(args, { abortEarly: false });
@@ -32,10 +37,16 @@ export const resolvers: ResolverMap = {
 				];
 			}
 			const hashPassword = await bcrypt.hashSync(password, 10);
-			await User.create({
+
+			const user = await User.create({
 				email,
 				password: hashPassword,
-			}).save();
+			});
+
+			user.save();
+
+			const link = createConfirmedEmailLink(url, user.id, redis);
+
 			return null;
 		},
 	},
