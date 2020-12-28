@@ -73,6 +73,7 @@ const exEndpoint = (server: GraphQLServer) => ({
 			const userId = await redis.get(id);
 			if (userId) {
 				await User.update({ id: userId as string }, { confirmed: true });
+				redis.del(id);
 				res.send("ok").status(200);
 			} else {
 				res.send("invalid").status(404);
