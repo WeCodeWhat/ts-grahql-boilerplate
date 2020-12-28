@@ -1,17 +1,12 @@
 import { GraphQLServer } from "graphql-yoga";
-import { importSchema } from "graphql-import";
-import * as path from "path";
 import { eventEmitter, EventEnum } from "./helpers/event";
-import { createTypeormConn } from "./helpers/orm";
+import { createTypeormConn } from "./utils/createTypeormConn";
 import { AddressInfo } from "net";
-import { mergeSchemas, makeExecutableSchema } from "graphql-tools";
-import { GraphQLSchema } from "graphql";
 import * as Redis from "ioredis";
-import * as fs from "fs";
 import { emailRoutes } from "./routes/emailRoutes";
 import { ContextParameters } from "graphql-yoga/dist/types";
 import { redis } from "./helpers/redis";
-
+import { genSchema } from "./utils/genSchema";
 interface IServer {
 	schema: any;
 	context: () => {
@@ -21,24 +16,18 @@ interface IServer {
 }
 
 const startServer = async () => {
-	const schemas: GraphQLSchema[] = Array();
-	const folders = fs.readdirSync(path.join(__dirname, "./modules"));
-	folders.forEach((folder) => {
-		const { resolvers }: any = require(`./modules/${folder}/resolvers`);
-		/** Create the typeDefs with file schema.graphql
-		 * @package graphql-import
-		 */
-		const typeDefs: any = importSchema(
-			path.join(__dirname, `./modules/${folder}/schema.graphql`)
-		);
-		schemas.push(makeExecutableSchema({ resolvers, typeDefs }));
-	});
+	/** Generate the list of schema for GraphQL server
+	 * @package graphql-tools
+	 * @package graphql-request
+	 * @package fs
+	 */
+	const schema = genSchema();
 
 	/** Create a GraphQL server
 	 * @package graphql-yoga
 	 */
 	const server = new GraphQLServer({
-		schema: mergeSchemas({ schemas }),
+		schema,
 		context: ({ request }: ContextParameters) => ({
 			redis,
 			url: request.protocol + "://" + request.get("host"),

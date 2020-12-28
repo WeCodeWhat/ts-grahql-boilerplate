@@ -22,9 +22,6 @@ setupInitialization(async () => {
 			redis
 		);
 	});
-
-	describe("", () => {});
-
 	describe("Make sure createConfirmationLink works and Redis delete the key", () => {
 		it("Response status is 200", async () => {
 			const res = await fetch(link);
@@ -36,12 +33,7 @@ setupInitialization(async () => {
 			const user = await User.findOne({ where: { id: userId } });
 			expect(user?.confirmed).toBeTruthy();
 		});
-		it("Send invalid status code if bad id sent", async () => {
-			const res = await fetch(
-				`${process.env.TEST_HOST as string}/confirm/1234`
-			);
-			expect(await res.text()).toEqual("invalid");
-		});
+
 		it("Redis delete the id key", async () => {
 			const chunks = link.split("/");
 			const key = chunks[chunks.length - 1];
