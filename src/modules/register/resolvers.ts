@@ -41,9 +41,7 @@ export const resolvers: ResolverMap = {
 			const user = await User.create({
 				email,
 				password: hashPassword,
-			});
-
-			user.save();
+			}).save();
 
 			createConfirmedEmailLink(url, user.id, redis);
 

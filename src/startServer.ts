@@ -33,7 +33,10 @@ const startServer = async () => {
 		schemas.push(makeExecutableSchema({ resolvers, typeDefs }));
 	});
 
-	const redis = new Redis();
+	const redis = new Redis({
+		port: 6379, // Redis port
+		host: "127.0.0.1", // Redis host
+	});
 
 	/** Create a GraphQL server
 	 * @package graphql-yoga
@@ -68,9 +71,12 @@ const exEndpoint = (server: GraphQLServer) => ({
 		server.express.get("/confirm/:id", async (req, res) => {
 			const { id } = req.params;
 			const userId = await redis.get(id);
-
-			await User.update({ id: userId as string }, { confirmed: true });
-			res.send("ok").status(200);
+			if (userId) {
+				await User.update({ id: userId as string }, { confirmed: true });
+				res.send("ok").status(200);
+			} else {
+				res.send("invalid").status(404);
+			}
 		});
 	},
 });
