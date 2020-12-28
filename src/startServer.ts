@@ -8,8 +8,9 @@ import { mergeSchemas, makeExecutableSchema } from "graphql-tools";
 import { GraphQLSchema } from "graphql";
 import * as Redis from "ioredis";
 import * as fs from "fs";
-import { User } from "./entity/User";
+import { emailRoutes } from "./routes/emailRoutes";
 import { ContextParameters } from "graphql-yoga/dist/types";
+import { redis } from "./helpers/redis";
 
 interface IServer {
 	schema: any;
@@ -33,11 +34,6 @@ const startServer = async () => {
 		schemas.push(makeExecutableSchema({ resolvers, typeDefs }));
 	});
 
-	const redis = new Redis({
-		port: 6379, // Redis port
-		host: "127.0.0.1", // Redis host
-	});
-
 	/** Create a GraphQL server
 	 * @package graphql-yoga
 	 */
@@ -49,7 +45,7 @@ const startServer = async () => {
 		}),
 	} as IServer);
 
-	exEndpoint(server).emailConfirmation(redis);
+	emailRoutes(server).confirmation(redis);
 
 	const connection = await createTypeormConn();
 	const environment = process.env.NODE_ENV;
@@ -65,21 +61,5 @@ const startServer = async () => {
 		APP: app,
 	};
 };
-
-const exEndpoint = (server: GraphQLServer) => ({
-	emailConfirmation: (redis: Redis.Redis) => {
-		server.express.get("/confirm/:id", async (req, res) => {
-			const { id } = req.params;
-			const userId = await redis.get(id);
-			if (userId) {
-				await User.update({ id: userId as string }, { confirmed: true });
-				redis.del(id);
-				res.send("ok").status(200);
-			} else {
-				res.send("invalid").status(404);
-			}
-		});
-	},
-});
 
 export default startServer;

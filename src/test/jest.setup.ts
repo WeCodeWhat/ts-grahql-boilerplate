@@ -13,11 +13,13 @@ export const setupInitialization = function JestGlobalSetupAlternative(
 ) {
 	let connection: Connection | null = null;
 	beforeAll(async () => {
-		const { APP, CONN } = await startServer();
-		const { port } = APP.address() as AddressInfo;
-		process.env.TEST_HOST = `http://127.0.0.1:${port}`;
-		connection = CONN;
-		beforeCb?.();
+		if (!process.env.TEST_HOST) {
+			const { APP, CONN } = await startServer();
+			const { port } = APP.address() as AddressInfo;
+			process.env.TEST_HOST = `http://127.0.0.1:${port}`;
+			connection = CONN;
+			beforeCb?.();
+		}
 	});
 
 	callback();
