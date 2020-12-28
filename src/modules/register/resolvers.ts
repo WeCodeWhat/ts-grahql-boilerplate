@@ -45,7 +45,7 @@ export const resolvers: ResolverMap = {
 
 			user.save();
 
-			const link = createConfirmedEmailLink(url, user.id, redis);
+			createConfirmedEmailLink(url, user.id, redis);
 
 			return null;
 		},

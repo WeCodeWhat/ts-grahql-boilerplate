@@ -20,14 +20,14 @@ interface IServer {
 }
 
 const startServer = async () => {
-	const schemas: GraphQLSchema[] = [];
+	const schemas: GraphQLSchema[] = Array();
 	const folders = fs.readdirSync(path.join(__dirname, "./modules"));
 	folders.forEach((folder) => {
-		const { resolvers } = require(`./modules/${folder}/resolvers`);
+		const { resolvers }: any = require(`./modules/${folder}/resolvers`);
 		/** Create the typeDefs with file schema.graphql
 		 * @package graphql-import
 		 */
-		const typeDefs = importSchema(
+		const typeDefs: any = importSchema(
 			path.join(__dirname, `./modules/${folder}/schema.graphql`)
 		);
 		schemas.push(makeExecutableSchema({ resolvers, typeDefs }));
