@@ -1,7 +1,6 @@
 import startServer from "../startServer";
 import { AddressInfo } from "net";
 import { Connection } from "typeorm";
-
 interface CallbackType<T> {
 	(args?: T): void;
 }

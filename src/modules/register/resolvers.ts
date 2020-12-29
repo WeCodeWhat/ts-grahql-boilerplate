@@ -4,7 +4,10 @@ import { User } from "../../entity/User";
 import * as Yup from "yup";
 import { formatYupErrors } from "../../utils/formatYupErrors";
 import { ErrorMessages } from "./errorMessage";
-import { createConfirmedEmailLink } from "../../services/emailService";
+import {
+	createConfirmedEmailLink,
+	sendEmailToUser,
+} from "../../services/emailService";
 
 const validateSchema = Yup.object().shape({
 	email: Yup.string().min(3).max(255).email(),
@@ -43,7 +46,11 @@ export const resolvers: ResolverMap = {
 				password: hashPassword,
 			}).save();
 
-			createConfirmedEmailLink(url, user.id, redis);
+			const link = await createConfirmedEmailLink(url, user.id, redis);
+
+			const previewURL = await sendEmailToUser(user.email, link);
+
+			console.log(previewURL);
 
 			return null;
 		},
