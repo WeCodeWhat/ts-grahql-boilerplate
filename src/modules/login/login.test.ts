@@ -60,8 +60,8 @@ setupInitialization(() => {
 			const res = await req(
 				process.env.TEST_HOST as string,
 				loginMutation(
-					(user as User).email,
-					(user as User).password + "12312412"
+					(user as User)?.email,
+					(user as User)?.password + "12312412"
 				)
 			);
 			expect(res.login).toBeNull();

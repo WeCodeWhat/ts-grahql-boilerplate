@@ -9,11 +9,14 @@ import { redis } from "./helpers/redis";
 import { genSchema } from "./utils/genSchema";
 import { sessionConfiguration } from "./config/session.config";
 import { EnvironmentType } from "./utils/environment";
+import { DEV_BASE_URL } from "./constants/global-variables";
+import { Session } from "./utils/graphql-utils";
 interface IServer {
 	schema: any;
 	context: () => {
 		redis: Redis.Redis;
 		url: string;
+		session: Session;
 	};
 }
 
@@ -34,6 +37,7 @@ const startServer = async () => {
 		context: ({ request }: ContextParameters) => ({
 			redis,
 			url: request.protocol + "://" + request.get("host"),
+			session: request.session as any,
 		}),
 	} as IServer);
 
@@ -47,6 +51,10 @@ const startServer = async () => {
 	const connection = await createTypeormConn();
 	const environment = process.env.NODE_ENV;
 	const app = await server.start({
+		cors: {
+			credentials: true,
+			origin: DEV_BASE_URL,
+		},
 		port: environment == EnvironmentType.TEST ? 0 : 4000,
 	});
 	console.log(

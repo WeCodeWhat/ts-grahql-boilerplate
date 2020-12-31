@@ -2,9 +2,7 @@ import { v4 } from "uuid";
 import * as Redis from "ioredis";
 import * as SparkPost from "sparkpost";
 
-const SparkPostClient = new SparkPost(
-	"e983391f4deeb4b4d490b7b11d2a0ef209867f33"
-);
+const SparkPostClient = new SparkPost(process.env.SPARKPOST_KEY);
 
 export const createConfirmedEmailLink = async (
 	url: string,

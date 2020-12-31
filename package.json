@@ -5,6 +5,7 @@
 	"description": "Boilerplate provided by Ben Awad and forked by Chase Chung",
 	"devDependencies": {
 		"@types/bcryptjs": "^2.4.2",
+		"@types/connect-redis": "0.0.16",
 		"@types/express-session": "^1.17.3",
 		"@types/faker": "^5.1.5",
 		"@types/ioredis": "^4.17.10",
@@ -25,6 +26,7 @@
 		"@types/uuid": "^8.3.0",
 		"@types/yup": "^0.29.11",
 		"bcryptjs": "^2.4.3",
+		"connect-redis": "^5.0.0",
 		"cross-env": "^7.0.3",
 		"dotenv": "^8.2.0",
 		"express-session": "^1.17.1",
@@ -55,7 +57,7 @@
 	"scripts": {
 		"start": "SET NODE_ENV=development & ts-node --files src/index.ts",
 		"dev": "SET NODE_ENV=development & nodemon --exec ts-node --files src/index.ts --trace-warnings",
-		"test": "SET NODE_ENV=test & jest --detectOpenHandles --watch",
+		"test": "SET NODE_ENV=test & jest --detectOpenHandles --watchAll",
 		"pm2": "SET NODE_ENV=production & pm2 start src/index.ts --watch",
 		"gen-schema-types": "ts-node --files src/scripts/createTypes.ts "
 	},

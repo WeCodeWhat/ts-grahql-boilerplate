@@ -10,7 +10,7 @@ const validateSchema = Yup.object().shape({
 
 export const resolvers: ResolverMap = {
 	Mutation: {
-		login: async (_: any, args: GQL.ILoginOnMutationArguments) => {
+		login: async (_: any, args: GQL.ILoginOnMutationArguments, { session }) => {
 			const { email, password } = args;
 
 			try {
@@ -29,6 +29,10 @@ export const resolvers: ResolverMap = {
 						message: ErrorMessages.emailIsNotConfirmed,
 					};
 				}
+
+				// Login Successfully
+				session.userId = user.id;
+
 				return null;
 			} catch (err) {
 				return {
