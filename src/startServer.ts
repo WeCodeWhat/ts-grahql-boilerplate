@@ -7,6 +7,8 @@ import { emailRoutes } from "./routes/emailRoutes";
 import { ContextParameters } from "graphql-yoga/dist/types";
 import { redis } from "./helpers/redis";
 import { genSchema } from "./utils/genSchema";
+import { sessionConfiguration } from "./config/session.config";
+import { EnvironmentType } from "./utils/environment";
 interface IServer {
 	schema: any;
 	context: () => {
@@ -17,14 +19,15 @@ interface IServer {
 
 const startServer = async () => {
 	/** Generate the list of schema for GraphQL server
-	 * @package graphql-tools
-	 * @package graphql-request
-	 * @package fs
+	 * @graphql-tools
+	 * @graphql-request
+	 * @gql2ts
+	 * @fs
 	 */
 	const schema = genSchema();
 
 	/** Create a GraphQL server
-	 * @package graphql-yoga
+	 * @graphql-yoga
 	 */
 	const server = new GraphQLServer({
 		schema,
@@ -36,9 +39,16 @@ const startServer = async () => {
 
 	emailRoutes(server).confirmation(redis);
 
+	/** Express session initialize
+	 * @express-session
+	 */
+	server.express.use(sessionConfiguration);
+
 	const connection = await createTypeormConn();
 	const environment = process.env.NODE_ENV;
-	const app = await server.start({ port: environment == "test" ? 0 : 4000 });
+	const app = await server.start({
+		port: environment == EnvironmentType.TEST ? 0 : 4000,
+	});
 	console.log(
 		`[${environment?.toUpperCase().trim()}] server is running on port ${
 			(app.address() as AddressInfo).port

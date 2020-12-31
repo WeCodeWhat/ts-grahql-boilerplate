@@ -1,6 +1,10 @@
 import { v4 } from "uuid";
 import * as Redis from "ioredis";
-import * as nodemailer from "nodemailer";
+import * as SparkPost from "sparkpost";
+
+const SparkPostClient = new SparkPost(
+	"e983391f4deeb4b4d490b7b11d2a0ef209867f33"
+);
 
 export const createConfirmedEmailLink = async (
 	url: string,
@@ -13,36 +17,22 @@ export const createConfirmedEmailLink = async (
 };
 
 export const sendEmailToUser = async (email: string, link: string) => {
-	let testAccount = await nodemailer.createTestAccount();
-
-	let transporter = nodemailer.createTransport({
-		host: email,
-		port: 587,
-		secure: false, // true for 465, false for other ports
-		auth: {
-			user: testAccount.user, // generated ethereal user
-			pass: testAccount.pass, // generated ethereal password
-		},
-	});
-
-	// send mail with defined transport object
-	let info = await transporter.sendMail(
-		{
-			from: '"Fred Foo 👻" <foo@example.com>', // sender address
-			to: email, // list of receivers
-			subject: "Confirmation Link", // Subject line
-			text: "Confirmation Link", // plain text body
-			html: `<b>Confirmation Link: ${link}</b>`, // html body
-		},
-		(err, info) => {
-			if (err) {
-				console.log(err);
-				throw new Error(err.message);
-			} else {
-				console.log("Message sent: %s", info.response);
-			}
-		}
-	);
-
-	return info;
+	try {
+		await SparkPostClient.transmissions.send({
+			options: {
+				sandbox: true,
+			},
+			content: {
+				from: "testing@sparkpostbox.com",
+				subject: "Confirmation Email",
+				html: `<html><body><p>Confirmation Link: ${link} </p></body></html>`,
+			},
+			recipients: [{ address: `${email}.sink.sparkpostmail.com` }],
+		});
+		console.log("Email sent successfully");
+		return true;
+	} catch (err) {
+		console.log(err);
+		return false;
+	}
 };

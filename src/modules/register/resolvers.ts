@@ -48,9 +48,7 @@ export const resolvers: ResolverMap = {
 
 			const link = await createConfirmedEmailLink(url, user.id, redis);
 
-			const previewURL = await sendEmailToUser(user.email, link);
-
-			console.log(previewURL);
+			await sendEmailToUser(user.email, link);
 
 			return null;
 		},
