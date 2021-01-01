@@ -1,3 +1,5 @@
+import "reflect-metadata";
+import * as dotenv from "dotenv";
 import { GraphQLServer } from "graphql-yoga";
 import { eventEmitter, EventEnum } from "./helpers/event";
 import { createTypeormConn } from "./utils/createTypeormConn";
@@ -9,6 +11,8 @@ import { genSchema } from "./utils/genSchema";
 import { sessionConfiguration } from "./config/session.config";
 import { EnvironmentType } from "./utils/environment";
 import { IServer } from "./utils/graphql-utils";
+
+dotenv.config();
 
 const startServer = async () => {
 	/** Generate the list of schema for GraphQL server

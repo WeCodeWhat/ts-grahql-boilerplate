@@ -8,6 +8,11 @@ import {
 import { v4 as uuidv4 } from "uuid";
 import * as bcrypt from "bcryptjs";
 
+export enum UserRole {
+	ADMIN = "ADMIN",
+	MEMBER = "MEMBER",
+}
+
 @Entity("users")
 export class User extends BaseEntity {
 	@PrimaryColumn("uuid", { nullable: false }) id: string;
@@ -29,4 +34,7 @@ export class User extends BaseEntity {
 	async hashPassword() {
 		this.password = await bcrypt.hash(this.password, 10);
 	}
+
+	@Column("text", { default: UserRole.MEMBER })
+	role: UserRole;
 }
