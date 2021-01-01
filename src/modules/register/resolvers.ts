@@ -1,5 +1,4 @@
-import { ResolverMap } from "../../utils/graphql-utils";
-import * as bcrypt from "bcryptjs";
+import { GQLResolverMap } from "../../utils/graphql-utils";
 import { User } from "../../entity/User";
 import * as Yup from "yup";
 import { formatYupErrors } from "../../utils/formatYupErrors";
@@ -14,7 +13,7 @@ const validateSchema = Yup.object().shape({
 	password: Yup.string().min(3).max(255),
 });
 
-export const resolvers: ResolverMap = {
+export const resolvers: GQLResolverMap = {
 	Mutation: {
 		register: async (
 			_: any,
@@ -39,11 +38,10 @@ export const resolvers: ResolverMap = {
 					},
 				];
 			}
-			const hashPassword = await bcrypt.hashSync(password, 10);
 
 			const user = await User.create({
 				email,
-				password: hashPassword,
+				password,
 			}).save();
 
 			const link = await createConfirmedEmailLink(url, user.id, redis);

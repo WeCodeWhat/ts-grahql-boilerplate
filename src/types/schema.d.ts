@@ -42,8 +42,15 @@ path: string;
 message: string;
 }
 
+interface IUser {
+__typename: "User";
+id: string;
+email: string;
+}
+
 interface IQuery {
 __typename: "Query";
+me: IUser | null;
 hello: string | null;
 }
 

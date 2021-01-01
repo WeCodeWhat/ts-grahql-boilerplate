@@ -1,4 +1,4 @@
-import { ResolverMap } from "../../utils/graphql-utils";
+import { GQLResolverMap } from "../../utils/graphql-utils";
 import * as bcrypt from "bcryptjs";
 import { User } from "../../entity/User";
 import * as Yup from "yup";
@@ -8,7 +8,7 @@ const validateSchema = Yup.object().shape({
 	email: Yup.string().min(3).max(255).email(),
 });
 
-export const resolvers: ResolverMap = {
+export const resolvers: GQLResolverMap = {
 	Mutation: {
 		login: async (_: any, args: GQL.ILoginOnMutationArguments, { session }) => {
 			const { email, password } = args;

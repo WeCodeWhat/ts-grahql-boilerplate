@@ -1,6 +1,9 @@
 import startServer from "../startServer";
 import { AddressInfo } from "net";
 import { getConnection } from "typeorm";
+import * as dotenv from "dotenv";
+
+dotenv.config();
 interface CallbackType<T> {
 	(args?: T): void;
 }

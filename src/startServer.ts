@@ -2,23 +2,13 @@ import { GraphQLServer } from "graphql-yoga";
 import { eventEmitter, EventEnum } from "./helpers/event";
 import { createTypeormConn } from "./utils/createTypeormConn";
 import { AddressInfo } from "net";
-import * as Redis from "ioredis";
 import { emailRoutes } from "./routes/emailRoutes";
 import { ContextParameters } from "graphql-yoga/dist/types";
 import { redis } from "./helpers/redis";
 import { genSchema } from "./utils/genSchema";
 import { sessionConfiguration } from "./config/session.config";
 import { EnvironmentType } from "./utils/environment";
-import { DEV_BASE_URL } from "./constants/global-variables";
-import { Session } from "./utils/graphql-utils";
-interface IServer {
-	schema: any;
-	context: () => {
-		redis: Redis.Redis;
-		url: string;
-		session: Session;
-	};
-}
+import { IServer } from "./utils/graphql-utils";
 
 const startServer = async () => {
 	/** Generate the list of schema for GraphQL server
@@ -50,12 +40,13 @@ const startServer = async () => {
 
 	const connection = await createTypeormConn();
 	const environment = process.env.NODE_ENV;
+	const isTesting = environment == EnvironmentType.TEST;
 	const app = await server.start({
 		cors: {
 			credentials: true,
-			origin: DEV_BASE_URL,
+			origin: isTesting ? "*" : process.env.FRONTEND_HOST,
 		},
-		port: environment == EnvironmentType.TEST ? 0 : 4000,
+		port: isTesting ? 0 : 4000,
 	});
 	console.log(
 		`[${environment?.toUpperCase().trim()}] server is running on port ${

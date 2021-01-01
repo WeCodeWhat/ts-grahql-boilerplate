@@ -1,6 +1,9 @@
 import { v4 } from "uuid";
 import * as Redis from "ioredis";
 import * as SparkPost from "sparkpost";
+import * as dotenv from "dotenv";
+
+dotenv.config();
 
 const SparkPostClient = new SparkPost(process.env.SPARKPOST_KEY);
 
