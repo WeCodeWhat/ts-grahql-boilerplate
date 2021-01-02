@@ -1,26 +1,17 @@
 import { request as req } from "graphql-request";
 import { ErrorMessages } from "./errorMessage";
 import { setupInitialization } from "../../test/jest.setup";
+import { registerMutation } from "../register/register.test";
 import * as faker from "faker";
 import { User } from "../../entity/User";
 
-const loginMutation = (e: string, p: string) => `
+export const loginMutation = (e: string, p: string) => `
     mutation LoginUser{
         login (email: "${e}", password: "${p}"){
 			path
 			message
 		}
-    }
-`;
-
-const registerMutation = (e: string, p: string) => `
-    mutation RegisterUser{
-        register (email: "${e}", password: "${p}"){
-			path
-			message
-		}
-    }
-`;
+    }`;
 
 const defaultMessage = {
 	path: "email",

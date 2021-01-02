@@ -3,19 +3,11 @@ import axios from "axios";
 import { User } from "../../entity/User";
 import { setupInitialization } from "../../test/jest.setup";
 import * as dotenv from "dotenv";
+import { loginMutation } from "../login/login.test";
 
 dotenv.config();
 
-const loginMutation = (e: string, p: string) => `
-    mutation LoginUser{
-        login (email: "${e}", password: "${p}"){
-			path
-			message
-		}
-    }
-`;
-
-const meQuery = `
+export const meQuery = `
 	query GetMe{
 		me {
 			id
@@ -41,15 +33,9 @@ setupInitialization(() => {
 	describe("ME", () => {
 		test("can't get user if not logged in", async () => {
 			const response = (
-				await axios.post(
-					process.env.TEST_HOST as string,
-					{
-						query: meQuery,
-					},
-					{
-						withCredentials: true,
-					}
-				)
+				await axios.post(process.env.TEST_HOST as string, {
+					query: meQuery,
+				})
 			).data;
 			expect(response.data.me).toBeNull();
 		});

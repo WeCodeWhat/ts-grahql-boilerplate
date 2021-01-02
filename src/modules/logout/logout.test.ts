@@ -4,28 +4,12 @@ import axios from "axios";
 import { User } from "../../entity/User";
 import { setupInitialization } from "../../test/jest.setup";
 import * as dotenv from "dotenv";
+import { loginMutation } from "../login/login.test";
+import { meQuery } from "../me/me.test";
 
 dotenv.config();
 
-const loginMutation = (e: string, p: string) => `
-    mutation LoginUser{
-        login (email: "${e}", password: "${p}"){
-			path
-			message
-		}
-    }
-`;
-
-const meQuery = `
-	query GetMe{
-		me {
-			id
-			email
-		}
-	}
-`;
-
-const logoutMutation = `
+export const logoutMutation = `
 mutation LogoutUser{
     logout
 }`;
@@ -45,6 +29,11 @@ setupInitialization(() => {
 		userId = user.id;
 	});
 	describe("Logout", () => {
+		it("[NOT LOGGED IN] destroy the user session on logout", async () => {
+			const res = await req(process.env.TEST_HOST as string, logoutMutation);
+			expect(res).toBeTruthy();
+		});
+
 		it("get current user", async () => {
 			await axios.post(
 				process.env.TEST_HOST as string,
@@ -72,7 +61,8 @@ setupInitialization(() => {
 				email: mockCredential.email,
 			});
 		});
-		it("destroy the user session on logout", async () => {
+
+		it("[LOGGED IN] destroy the user session on logout", async () => {
 			const res = await req(process.env.TEST_HOST as string, logoutMutation);
 
 			expect(res).toBeTruthy();

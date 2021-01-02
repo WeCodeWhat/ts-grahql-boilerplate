@@ -7,7 +7,7 @@ import { setupInitialization } from "../../test/jest.setup";
 const email = faker.internet.email();
 const password = faker.internet.password();
 
-const mutation = (e: string, p: string) => `
+export const registerMutation = (e: string, p: string) => `
     mutation RegisterUser{
         register (email: "${e}", password: "${p}"){
 			path
@@ -21,7 +21,7 @@ setupInitialization(() => {
 		it("Register user to the database", async () => {
 			const res = await req(
 				process.env.TEST_HOST as string,
-				mutation(email, password)
+				registerMutation(email, password)
 			);
 			expect(res).toStrictEqual({ register: null });
 			const users = await User.find({ where: { email } });
@@ -33,8 +33,12 @@ setupInitialization(() => {
 		describe("Validate the register input", () => {
 			it("Check for the email length", async () => {
 				expect(
-					(await req(process.env.TEST_HOST as string, mutation("b", password)))
-						.register
+					(
+						await req(
+							process.env.TEST_HOST as string,
+							registerMutation("b", password)
+						)
+					).register
 				).toEqual([
 					{ message: ErrorMessages.emailNotLongEnough, path: "email" },
 					{ message: ErrorMessages.invalidEmail, path: "email" },
@@ -46,7 +50,7 @@ setupInitialization(() => {
 					(
 						await req(
 							process.env.TEST_HOST as string,
-							mutation(faker.internet.email(), "1")
+							registerMutation(faker.internet.email(), "1")
 						)
 					).register
 				).toEqual([
@@ -59,7 +63,7 @@ setupInitialization(() => {
 					(
 						await req(
 							process.env.TEST_HOST as string,
-							mutation(email, password)
+							registerMutation(email, password)
 						)
 					).register
 				).toEqual([
@@ -75,7 +79,7 @@ setupInitialization(() => {
 					(
 						await req(
 							process.env.TEST_HOST as string,
-							mutation("abc", password)
+							registerMutation("abc", password)
 						)
 					).register
 				).toEqual([{ path: "email", message: ErrorMessages.invalidEmail }]);
