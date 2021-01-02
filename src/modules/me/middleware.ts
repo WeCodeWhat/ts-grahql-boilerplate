@@ -8,12 +8,10 @@ export default async (
 	context: any,
 	info: any
 ) => {
-	// console.log("args given: ", args);
-	// // middleware
-
-	// if (!context.session?.userId) throw new Error("no cookie");
-	// const user = await User.findOne({ where: { id: context.session.userId } });
-	// console.log("middleware user: ", user);
+	//middleware
+	if (!context.session?.userId) throw new Error("no cookie");
+	const user = await User.findOne({ where: { id: context.session.userId } });
+	console.log("Middleware user: ", user);
 	const res = await resolver(parent, args, context, info);
 	// afterware
 	console.log("Result: ", res);

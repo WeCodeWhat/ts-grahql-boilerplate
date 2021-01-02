@@ -23,6 +23,7 @@ column: number;
 interface IMutation {
 __typename: "Mutation";
 login: IError | null;
+logout: boolean | null;
 register: Array<IError> | null;
 }
 

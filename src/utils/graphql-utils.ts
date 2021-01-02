@@ -1,6 +1,7 @@
+import { Session } from "express-session";
 import { Redis } from "ioredis";
 
-export interface Session {
+export interface SessionStorage extends Session {
 	userId?: string;
 }
 export interface GQLResolverMap {
@@ -15,7 +16,7 @@ export type GQLResolverFunction = (
 	context: {
 		redis: Redis;
 		url: string;
-		session: Session;
+		session: SessionStorage;
 	},
 	info: any
 ) => any;
@@ -27,7 +28,7 @@ export type GQLMiddlewareFunction = (
 	context: {
 		redis: Redis;
 		url: string;
-		session: Session;
+		session: SessionStorage;
 	},
 	info: any
 ) => any;
@@ -37,6 +38,6 @@ export interface IServer {
 	context: () => {
 		redis: Redis;
 		url: string;
-		session: Session;
+		session: SessionStorage;
 	};
 }
