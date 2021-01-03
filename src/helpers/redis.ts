@@ -1,5 +1,6 @@
 import * as Redis from "ioredis";
 import * as connectRedis from "connect-redis";
+import { REDIS_SESSION_PREFIX } from "../constants/global-variables";
 
 export const redis = new Redis({
 	port: 6379, // Redis port
@@ -9,5 +10,5 @@ export const redis = new Redis({
 export const initializeRedisStore = (session: any): connectRedis.RedisStore => {
 	const RedisStore = connectRedis(session);
 
-	return new RedisStore({ client: redis });
+	return new RedisStore({ client: redis, prefix: REDIS_SESSION_PREFIX });
 };

@@ -32,6 +32,7 @@ const startServer = async () => {
 			redis,
 			url: request.protocol + "://" + request.get("host"),
 			session: request.session as any,
+			req: request,
 		}),
 	} as IServer);
 
