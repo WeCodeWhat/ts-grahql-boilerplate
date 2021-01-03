@@ -1,18 +1,10 @@
 import * as faker from "faker";
-import { request as req } from "graphql-request";
-import axios from "axios";
 import { User } from "../../entity/User";
 import { setupInitialization } from "../../test/jest.setup";
 import * as dotenv from "dotenv";
-import { loginMutation } from "../login/login.test";
-import { meQuery } from "../me/me.test";
+import { TestClient } from "../../utils/TestClient";
 
 dotenv.config();
-
-export const logoutMutation = `
-mutation LogoutUser{
-    logout
-}`;
 
 const mockCredential = {
 	email: faker.internet.email(),
@@ -20,8 +12,10 @@ const mockCredential = {
 };
 
 let userId: any = "";
+let client: TestClient | null = null;
 setupInitialization(() => {
 	beforeAll(async () => {
+		client = new TestClient(process.env.TEST_HOST as string);
 		const user = await User.create({
 			...mockCredential,
 			confirmed: true,
@@ -30,32 +24,13 @@ setupInitialization(() => {
 	});
 	describe("Logout", () => {
 		it("[NOT LOGGED IN] destroy the user session on logout", async () => {
-			const res = await req(process.env.TEST_HOST as string, logoutMutation);
+			const res = (await client?.logout()).data;
 			expect(res).toBeTruthy();
 		});
 
 		it("get current user", async () => {
-			await axios.post(
-				process.env.TEST_HOST as string,
-				{
-					query: loginMutation(mockCredential.email, mockCredential.password),
-				},
-				{
-					withCredentials: true,
-				}
-			);
-
-			const response = (
-				await axios.post(
-					process.env.TEST_HOST as string,
-					{
-						query: meQuery,
-					},
-					{
-						withCredentials: true,
-					}
-				)
-			).data;
+			await client?.login(mockCredential.email, mockCredential.password);
+			const response = (await client?.me()).data;
 			expect(response.data.me).toEqual({
 				id: userId,
 				email: mockCredential.email,
@@ -63,8 +38,7 @@ setupInitialization(() => {
 		});
 
 		it("[LOGGED IN] destroy the user session on logout", async () => {
-			const res = await req(process.env.TEST_HOST as string, logoutMutation);
-
+			const res = (await client?.logout()).data;
 			expect(res).toBeTruthy();
 		});
 	});

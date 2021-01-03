@@ -1,17 +1,11 @@
-import { request as req } from "graphql-request";
 import { ErrorMessages } from "./errorMessage";
 import { setupInitialization } from "../../test/jest.setup";
-import { registerMutation } from "../register/register.test";
 import * as faker from "faker";
 import { User } from "../../entity/User";
+import * as dotenv from "dotenv";
+import { TestClient } from "../../utils/TestClient";
 
-export const loginMutation = (e: string, p: string) => `
-    mutation LoginUser{
-        login (email: "${e}", password: "${p}"){
-			path
-			message
-		}
-    }`;
+dotenv.config();
 
 const defaultMessage = {
 	path: "email",
@@ -23,39 +17,31 @@ const mockCredential = {
 };
 
 let user: User | null = null;
+let client: TestClient | null = null;
 setupInitialization(() => {
 	beforeAll(async () => {
-		await req(
-			process.env.TEST_HOST as string,
-			registerMutation(mockCredential.email, mockCredential.password)
-		);
+		client = new TestClient(process.env.TEST_HOST as string);
+		console.log(client);
+		await client.register(mockCredential.email, mockCredential.password);
 		user = (await User.find({ where: { email: mockCredential.email } }))[0];
 		user.confirmed = false;
 	});
 	describe("Authenticate the login progress", () => {
 		it("Catch error with wrong credentials", async () => {
-			const res = await req(
-				process.env.TEST_HOST as string,
-				loginMutation("1231dsfasda21@email.com", "asd123dafa")
-			);
-			expect(res.login).toEqual(defaultMessage);
+			const res = await client?.login("1231dsfasda21@email.com", "asd123dafa");
+			console.log(res);
+			expect(res.data.login).toEqual(defaultMessage);
 		});
 		it("Yup validate email input", async () => {
-			const res = await req(
-				process.env.TEST_HOST as string,
-				loginMutation("1231", "asd123dafa")
-			);
-			expect(res.login).toEqual(defaultMessage);
+			const res = await client?.login("1231", "asd123dafa");
+			expect(res.data.login).toEqual(defaultMessage);
 		});
 		it("Authenticate a valid email", async () => {
-			const res = await req(
-				process.env.TEST_HOST as string,
-				loginMutation(
-					(user as User)?.email,
-					(user as User)?.password + "12312412"
-				)
+			const res = await client?.login(
+				(user as User)?.email,
+				(user as User)?.password + "12312412"
 			);
-			expect(res.login).toBeNull();
+			expect(res.data.login).toBeNull();
 		});
 	});
 });

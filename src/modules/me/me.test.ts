@@ -1,20 +1,10 @@
 import * as faker from "faker";
-import axios from "axios";
 import { User } from "../../entity/User";
 import { setupInitialization } from "../../test/jest.setup";
 import * as dotenv from "dotenv";
-import { loginMutation } from "../login/login.test";
+import { TestClient } from "../../utils/TestClient";
 
 dotenv.config();
-
-export const meQuery = `
-	query GetMe{
-		me {
-			id
-			email
-		}
-	}
-`;
 
 const mockCredential = {
 	email: faker.internet.email(),
@@ -22,8 +12,10 @@ const mockCredential = {
 };
 
 let userId: any = "";
+let client: TestClient | null = null;
 setupInitialization(() => {
 	beforeAll(async () => {
+		client = new TestClient(process.env.TEST_HOST as string);
 		const user = await User.create({
 			...mockCredential,
 			confirmed: true,
@@ -32,36 +24,19 @@ setupInitialization(() => {
 	});
 	describe("ME", () => {
 		test("can't get user if not logged in", async () => {
-			const response = (
-				await axios.post(process.env.TEST_HOST as string, {
-					query: meQuery,
-				})
-			).data;
-			expect(response.data.me).toBeNull();
+			try {
+				const response = (await client?.me()).data;
+				expect(response.me).toBeNull();
+			} catch (error) {
+				expect(error.message).toEqual("no cookie");
+			}
 		});
 		test("get current user", async () => {
-			await axios.post(
-				process.env.TEST_HOST as string,
-				{
-					query: loginMutation(mockCredential.email, mockCredential.password),
-				},
-				{
-					withCredentials: true,
-				}
-			);
+			await client?.login(mockCredential.email, mockCredential.password);
 
-			const response = (
-				await axios.post(
-					process.env.TEST_HOST as string,
-					{
-						query: meQuery,
-					},
-					{
-						withCredentials: true,
-					}
-				)
-			).data;
-			expect(response.data.me).toEqual({
+			const response = (await client?.me()).data;
+			console.log(response);
+			expect(response.me).toEqual({
 				id: userId,
 				email: mockCredential.email,
 			});
