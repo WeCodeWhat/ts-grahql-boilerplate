@@ -62,7 +62,8 @@
 		"dev": "SET NODE_ENV=development & nodemon --exec ts-node --files src/index.ts --trace-warnings",
 		"test": "SET NODE_ENV=test & jest --detectOpenHandles --watchAll --runInBand",
 		"pm2": "SET NODE_ENV=production & pm2 start src/index.ts --watch",
-		"gen-schema-types": "ts-node --files src/scripts/createTypes.ts "
+		"gen-schema-types": "ts-node --files src/scripts/createTypes.ts",
+		"gen-env-types": "npx gen-env-types .env -o src/types/env.d.ts -e ."
 	},
 	"jest": {
 		"transform": {
