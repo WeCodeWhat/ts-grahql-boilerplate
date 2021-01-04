@@ -6,10 +6,10 @@ import { removeAllUserSession } from "./removeUserSession";
 export const forgotPasswordLockAccount = async (
 	userId: string,
 	redis: Redis,
-	session: Session
+	session?: Session
 ) => {
 	// can't login
 	await User.update({ id: userId }, { forgotPasswordLock: true });
 	// remove all sessions
-	await removeAllUserSession(userId, session, redis);
+	await removeAllUserSession(userId, session as Session, redis);
 };

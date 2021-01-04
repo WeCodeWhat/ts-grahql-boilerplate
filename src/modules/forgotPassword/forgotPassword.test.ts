@@ -6,6 +6,7 @@ import * as faker from "faker";
 import { createForgotPasswordLink } from "../../services/emailService";
 import { redis } from "../../helpers/redis";
 import { ErrorMessages } from "../login/errorMessage";
+import { forgotPasswordLockAccount } from "../../utils/forgotPasswordLockAccount";
 
 dotenv.config();
 
@@ -19,7 +20,7 @@ let client: TestClient | null = null;
 setupInitialization(() => {
 	beforeAll(async () => {
 		client = new TestClient(process.env.TEST_HOST as string);
-		user = await User.create({ ...mockCredential }).save();
+		user = await User.create({ ...mockCredential, confirmed: true }).save();
 	});
 	describe("Forgot Password", () => {
 		test("Email is sent to user", async () => {
@@ -27,6 +28,8 @@ setupInitialization(() => {
 			expect(res).toBeTruthy();
 		});
 		test("Make sure it works", async () => {
+			//lock account on forget password
+			await forgotPasswordLockAccount(user?.id as string, redis);
 			const link = await createForgotPasswordLink(
 				"",
 				user?.id as string,
