@@ -33,7 +33,7 @@ setupInitialization(() => {
 		});
 		test("get current user", async () => {
 			await client?.login(mockCredential.email, mockCredential.password);
-
+			console.log(await User.find({ where: { email: mockCredential.email } }));
 			const response = (await client?.me()).data;
 			console.log(response);
 			expect(response.me).toEqual({

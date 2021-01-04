@@ -27,8 +27,11 @@ export class User extends BaseEntity {
 		this.id = uuidv4();
 	}
 
-	@Column("boolean", { default: true })
+	@Column("boolean", { default: false })
 	confirmed: boolean;
+
+	@Column("boolean", { default: false })
+	forgotPasswordLock: boolean;
 
 	@BeforeInsert()
 	async hashPassword() {

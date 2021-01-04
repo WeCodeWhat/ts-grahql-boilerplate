@@ -17,7 +17,7 @@ export const createConfirmedEmailLink = async (
 	redis: Redis.Redis
 ) => {
 	const id = v4();
-	await redis.set(`${EMAIL_CONFIRM_PREFIX}${id}`, userId, "ex", 60 * 60 * 24);
+	await redis.set(`${EMAIL_CONFIRM_PREFIX}${id}`, userId, "ex", 60 * 20);
 	return `${url}/confirm/${id}`;
 };
 
@@ -27,7 +27,7 @@ export const createForgotPasswordLink = async (
 	redis: Redis.Redis
 ) => {
 	const id = v4();
-	await redis.set(`${FORGOT_PASSWORD_PREFIX}${id}`, userId, "ex", 60 * 60 * 24);
+	await redis.set(`${FORGOT_PASSWORD_PREFIX}${id}`, userId, "ex", 60 * 20);
 	return `${url}/change-password/${id}`;
 };
 

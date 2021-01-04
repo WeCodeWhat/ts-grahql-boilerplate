@@ -24,7 +24,7 @@ export const resolvers: GQLResolverMap = {
 				const user = (await User.find({ where: { email } }))[0];
 
 				const passwordIsRight = await bcrypt.compare(password, user.password);
-				console.log(password, user.password);
+				console.log(password, user.password, passwordIsRight);
 				if (!user || !passwordIsRight) {
 					throw new Error();
 				}
@@ -33,6 +33,13 @@ export const resolvers: GQLResolverMap = {
 					return {
 						path: "email",
 						message: ErrorMessages.emailIsNotConfirmed,
+					};
+				}
+				//TODO add more test case
+				if (user.forgotPasswordLock) {
+					return {
+						path: "email",
+						message: ErrorMessages.forgotPasswordLock,
 					};
 				}
 
