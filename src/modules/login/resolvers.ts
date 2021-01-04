@@ -23,8 +23,9 @@ export const resolvers: GQLResolverMap = {
 
 				const user = (await User.find({ where: { email } }))[0];
 
-				await bcrypt.compare(password, user.password);
-				if (!user) {
+				const passwordIsRight = await bcrypt.compare(password, user.password);
+				console.log(password, user.password);
+				if (!user || !passwordIsRight) {
 					throw new Error();
 				}
 

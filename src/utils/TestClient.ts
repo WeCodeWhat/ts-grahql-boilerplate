@@ -1,35 +1,6 @@
 import * as rp from "request-promise";
+import { gql } from "graphql-request";
 
-export const loginMutation = (e: string, p: string) => `
-    mutation LoginUser{
-        login (email: "${e}", password: "${p}"){
-			path
-			message
-		}
-    }`;
-
-export const registerMutation = (e: string, p: string) => `
-    mutation RegisterUser{
-        register (email: "${e}", password: "${p}"){
-			path
-			message
-		}
-    }
-`;
-export const logoutMutation = `
-	mutation LogoutUser{
-    	logout
-	}
-`;
-
-export const meQuery = `
-	query GetMe{
-		me {
-			id
-			email
-		}
-	}
-`;
 export class TestClient {
 	url: string;
 	options: {
@@ -49,28 +20,89 @@ export class TestClient {
 	async login(email: string, password: string) {
 		return rp.post(this.url, {
 			...this.options,
-			body: { query: loginMutation(email, password) },
+			body: {
+				query: gql`
+			mutation LoginUser{
+				login (email: "${email}", password: "${password}"){
+					path
+					message
+				}
+			}`,
+			},
 		});
 	}
 
 	async register(email: string, password: string) {
 		return rp.post(this.url, {
 			...this.options,
-			body: { query: registerMutation(email, password) },
+			body: {
+				query: gql`
+					mutation RegisterUser{
+						register (email: "${email}", password: "${password}"){
+							path
+							message
+						}
+					}
+				`,
+			},
 		});
 	}
 
 	async logout() {
 		return rp.post(this.url, {
 			...this.options,
-			body: { query: logoutMutation },
+			body: {
+				query: gql`
+					mutation LogoutUser {
+						logout
+					}
+				`,
+			},
 		});
 	}
 
 	async me() {
 		return rp.post(this.url, {
 			...this.options,
-			body: { query: meQuery },
+			body: {
+				query: gql`
+					query GetMe {
+						me {
+							id
+							email
+						}
+					}
+				`,
+			},
+		});
+	}
+
+	async forgotPasswordChange(newPassword: string, key: string) {
+		return rp.post(this.url, {
+			...this.options,
+			body: {
+				query: gql`
+					mutation ForgotPasswordChange {
+						forgotPasswordChange(newPassword: "${newPassword}", key: "${key}") {
+							path
+							message
+						}
+					}
+				`,
+			},
+		});
+	}
+
+	async sendForgotPasswordEmail(email: string) {
+		return rp.post(this.url, {
+			...this.options,
+			body: {
+				query: gql`
+					mutation SendForgotPasswordEmail {
+						sendForgotPasswordEmail(email: "${email}") 
+					}
+				`,
+			},
 		});
 	}
 }

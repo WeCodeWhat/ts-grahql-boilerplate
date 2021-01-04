@@ -2,6 +2,10 @@ import { v4 } from "uuid";
 import * as Redis from "ioredis";
 import * as SparkPost from "sparkpost";
 import * as dotenv from "dotenv";
+import {
+	EMAIL_CONFIRM_PREFIX,
+	FORGOT_PASSWORD_PREFIX,
+} from "../constants/global-variables";
 
 dotenv.config();
 
@@ -13,8 +17,18 @@ export const createConfirmedEmailLink = async (
 	redis: Redis.Redis
 ) => {
 	const id = v4();
-	await redis.set(id, userId, "ex", 60 * 60 * 24);
+	await redis.set(`${EMAIL_CONFIRM_PREFIX}${id}`, userId, "ex", 60 * 60 * 24);
 	return `${url}/confirm/${id}`;
+};
+
+export const createForgotPasswordLink = async (
+	url: string,
+	userId: string,
+	redis: Redis.Redis
+) => {
+	const id = v4();
+	await redis.set(`${FORGOT_PASSWORD_PREFIX}${id}`, userId, "ex", 60 * 60 * 24);
+	return `${url}/change-password/${id}`;
 };
 
 export const sendEmailToUser = async (email: string, link: string) => {
