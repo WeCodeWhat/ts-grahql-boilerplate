@@ -7,6 +7,7 @@ import { createForgotPasswordLink } from "../../services/emailService";
 import { redis } from "../../helpers/redis";
 import { ErrorMessages } from "../login/errorMessage";
 import { forgotPasswordLockAccount } from "../../utils/forgotPasswordLockAccount";
+import { ErrorMessage } from "./ErrorMessage";
 
 dotenv.config();
 
@@ -26,6 +27,17 @@ setupInitialization(() => {
 		test("Email is sent to user", async () => {
 			const res = await client?.sendForgotPasswordEmail(user?.email as string);
 			expect(res).toBeTruthy();
+		});
+		test("Email is not exist", async () => {
+			const {
+				data: { sendForgotPasswordEmail },
+			} = await client?.sendForgotPasswordEmail("192891");
+			expect(sendForgotPasswordEmail).toEqual([
+				{
+					path: "email",
+					message: ErrorMessage.userIsNotExist,
+				},
+			]);
 		});
 		test("Make sure it works", async () => {
 			//lock account on forget password

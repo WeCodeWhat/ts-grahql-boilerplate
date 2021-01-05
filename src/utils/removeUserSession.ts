@@ -21,8 +21,10 @@ export const removeAllUserSession = async (
 	}
 	await Promise.all(promises);
 
-	session.destroy((err: any) => {
-		if (err) return false;
-		return true;
-	});
+	if (session) {
+		session.destroy((err: any) => {
+			if (err) return false;
+			return true;
+		});
+	}
 };

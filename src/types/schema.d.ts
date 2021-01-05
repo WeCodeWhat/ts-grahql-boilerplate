@@ -22,7 +22,7 @@ column: number;
 
 interface IMutation {
 __typename: "Mutation";
-sendForgotPasswordEmail: boolean | null;
+sendForgotPasswordEmail: Array<IError> | null;
 forgotPasswordChange: Array<IError> | null;
 login: IError | null;
 logout: boolean | null;

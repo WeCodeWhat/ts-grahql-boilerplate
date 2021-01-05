@@ -2,6 +2,7 @@ import { GraphQLServer } from "graphql-yoga";
 import { Redis } from "ioredis";
 import { Request, Response } from "express";
 import { User } from "../entity/User";
+// import { gql, request as gqlReq } from "graphql-request"
 
 export const emailRoutes = (server: GraphQLServer) => ({
 	confirmation: (redis: Redis) => {
@@ -17,4 +18,19 @@ export const emailRoutes = (server: GraphQLServer) => ({
 			}
 		});
 	},
+	// forgotPasswordRoute: (redis: Redis)=> {
+	// 	server.express.get("/change-password/:id", async (req: Request, res: Response) => {
+	// 		const { id } = req.params;
+	// 		await gqlReq(req.baseUrl, gql`
+	// 			mutation ForgotPassword{
+	// 				forgotPasswordChange(key: "${id}", newPassword: "${newPassword}"){}
+	// 			}
+	// 		`)
+	// 		try {
+
+	// 		} catch (error) {
+
+	// 		}
+	// 	});
+	// }
 });

@@ -99,7 +99,10 @@ export class TestClient {
 			body: {
 				query: gql`
 					mutation SendForgotPasswordEmail {
-						sendForgotPasswordEmail(email: "${email}") 
+						sendForgotPasswordEmail(email: "${email}"){
+							path
+							message
+						}
 					}
 				`,
 			},
