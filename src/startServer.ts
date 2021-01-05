@@ -11,6 +11,7 @@ import { genSchema } from "./utils/genSchema";
 import { sessionConfiguration } from "./config/session.config";
 import { EnvironmentType } from "./utils/environment";
 import { IServer } from "./utils/graphql-utils";
+import { limiter } from "./helpers/rate-limiter";
 
 dotenv.config();
 
@@ -42,6 +43,9 @@ const startServer = async () => {
 	 * @express-session
 	 */
 	server.express.use(sessionConfiguration);
+
+	// Initialize the rate limiter
+	server.express.use(limiter);
 
 	const connection = await createTypeormConn();
 	const environment = process.env.NODE_ENV;

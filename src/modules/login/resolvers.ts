@@ -35,7 +35,6 @@ export const resolvers: GQLResolverMap = {
 						message: ErrorMessages.emailIsNotConfirmed,
 					};
 				}
-				//TODO add more test case
 				if (user.forgotPasswordLock) {
 					return {
 						path: "email",
