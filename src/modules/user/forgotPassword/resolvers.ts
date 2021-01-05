@@ -1,16 +1,16 @@
-import { GQLResolverMap } from "../../utils/graphql-utils";
+import { GQLResolverMap } from "../../../utils/graphql-utils";
 import * as bcrypt from "bcryptjs";
 import * as Yup from "yup";
 import {
 	createForgotPasswordLink,
 	sendEmailToUser,
-} from "../../services/emailService";
-import { FORGOT_PASSWORD_PREFIX } from "../../constants/global-variables";
-import { User } from "../../entity/User";
-import { formatYupErrors } from "../../utils/formatYupErrors";
-import { forgotPasswordLockAccount } from "../../utils/forgotPasswordLockAccount";
+} from "../../../services/emailService";
+import { FORGOT_PASSWORD_PREFIX } from "../../../constants/global-variables";
+import { User } from "../../../entity/User";
+import { formatYupErrors } from "../../../utils/formatYupErrors";
+import { forgotPasswordLockAccount } from "../../../utils/forgotPasswordLockAccount";
 import { ErrorMessage } from "./ErrorMessage";
-import { yupSchemaValidation } from "../../yup.schema";
+import { yupSchemaValidation } from "../../../yup.schema";
 
 const validateSchema = Yup.object().shape({
 	password: yupSchemaValidation.password,

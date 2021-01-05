@@ -1,8 +1,8 @@
 import * as faker from "faker";
-import { User } from "../../entity/User";
-import { setupInitialization } from "../../test/jest.setup";
+import { User } from "../../../entity/User";
+import { setupInitialization } from "../../../test/jest.setup";
 import * as dotenv from "dotenv";
-import { TestClient } from "../../utils/TestClient";
+import { TestClient } from "../../../utils/TestClient";
 
 dotenv.config();
 

@@ -1,13 +1,13 @@
-import { GQLResolverMap } from "../../utils/graphql-utils";
-import { User } from "../../entity/User";
+import { GQLResolverMap } from "../../../utils/graphql-utils";
+import { User } from "../../../entity/User";
 import * as Yup from "yup";
-import { formatYupErrors } from "../../utils/formatYupErrors";
+import { formatYupErrors } from "../../../utils/formatYupErrors";
 import { ErrorMessages } from "./errorMessage";
 import {
 	createConfirmedEmailLink,
 	sendEmailToUser,
-} from "../../services/emailService";
-import { yupSchemaValidation } from "../../yup.schema";
+} from "../../../services/emailService";
+import { yupSchemaValidation } from "../../../yup.schema";
 
 const validateSchema = Yup.object().shape({
 	email: yupSchemaValidation.email,

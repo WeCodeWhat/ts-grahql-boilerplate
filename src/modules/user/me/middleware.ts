@@ -1,5 +1,5 @@
-import { User } from "../../entity/User";
-import { GQLResolverFunction } from "../../utils/graphql-utils";
+import { User } from "../../../entity/User";
+import { GQLResolverFunction } from "../../../utils/graphql-utils";
 
 export default async (
 	resolver: GQLResolverFunction,

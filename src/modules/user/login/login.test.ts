@@ -1,9 +1,9 @@
 import { ErrorMessages } from "./errorMessage";
-import { setupInitialization } from "../../test/jest.setup";
+import { setupInitialization } from "../../../test/jest.setup";
 import * as faker from "faker";
-import { User } from "../../entity/User";
+import { User } from "../../../entity/User";
 import * as dotenv from "dotenv";
-import { TestClient } from "../../utils/TestClient";
+import { TestClient } from "../../../utils/TestClient";
 // import { createConfirmedEmailLink } from "../../services/emailService";
 // import { redis } from "../../helpers/redis";
 // import fetch from "node-fetch";

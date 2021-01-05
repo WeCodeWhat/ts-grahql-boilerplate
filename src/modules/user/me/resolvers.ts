@@ -1,7 +1,7 @@
-import { GQLResolverMap } from "../../utils/graphql-utils";
+import { GQLResolverMap } from "../../../utils/graphql-utils";
 
-import { User } from "../../entity/User";
-import { createMiddleware } from "../../utils/createMiddleware";
+import { User } from "../../../entity/User";
+import { createMiddleware } from "../../../utils/createMiddleware";
 import middleware from "./middleware";
 
 export const resolvers: GQLResolverMap = {

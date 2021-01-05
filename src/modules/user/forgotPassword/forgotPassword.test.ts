@@ -1,12 +1,12 @@
-import { setupInitialization } from "../../test/jest.setup";
+import { setupInitialization } from "../../../test/jest.setup";
 import * as dotenv from "dotenv";
-import { TestClient } from "../../utils/TestClient";
-import { User } from "../../entity/User";
+import { TestClient } from "../../../utils/TestClient";
+import { User } from "../../../entity/User";
 import * as faker from "faker";
-import { createForgotPasswordLink } from "../../services/emailService";
-import { redis } from "../../helpers/redis";
+import { createForgotPasswordLink } from "../../../services/emailService";
+import { redis } from "../../../helpers/redis";
 import { ErrorMessages } from "../login/errorMessage";
-import { forgotPasswordLockAccount } from "../../utils/forgotPasswordLockAccount";
+import { forgotPasswordLockAccount } from "../../../utils/forgotPasswordLockAccount";
 import { ErrorMessage } from "./ErrorMessage";
 import { ErrorMessages as LoginErrorMessage } from "../login/errorMessage";
 

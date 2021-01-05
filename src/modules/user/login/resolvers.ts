@@ -1,10 +1,10 @@
-import { GQLResolverMap } from "../../utils/graphql-utils";
+import { GQLResolverMap } from "../../../utils/graphql-utils";
 import * as bcrypt from "bcryptjs";
-import { User } from "../../entity/User";
+import { User } from "../../../entity/User";
 import * as Yup from "yup";
 import { ErrorMessages } from "./errorMessage";
-import { USER_SESSION_ID_PREFIX } from "../../constants/global-variables";
-import { yupSchemaValidation } from "../../yup.schema";
+import { USER_SESSION_ID_PREFIX } from "../../../constants/global-variables";
+import { yupSchemaValidation } from "../../../yup.schema";
 
 const validateSchema = Yup.object().shape({
 	email: yupSchemaValidation.email,

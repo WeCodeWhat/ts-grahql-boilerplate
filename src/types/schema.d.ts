@@ -20,6 +20,16 @@ line: number;
 column: number;
 }
 
+interface IQuery {
+__typename: "Query";
+hello: string | null;
+me: IUser | null;
+}
+
+interface IHelloOnQueryArguments {
+name: string;
+}
+
 interface IMutation {
 __typename: "Mutation";
 sendForgotPasswordEmail: Array<IError> | null;
@@ -48,26 +58,16 @@ email: string;
 password: string;
 }
 
-interface IError {
-__typename: "Error";
-path: string;
-message: string;
-}
-
 interface IUser {
 __typename: "User";
 id: string;
 email: string;
 }
 
-interface IQuery {
-__typename: "Query";
-me: IUser | null;
-hello: string | null;
-}
-
-interface IHelloOnQueryArguments {
-name: string;
+interface IError {
+__typename: "Error";
+path: string;
+message: string;
 }
 }
 
