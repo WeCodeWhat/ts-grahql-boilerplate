@@ -4,9 +4,10 @@ import { User } from "../../entity/User";
 import * as Yup from "yup";
 import { ErrorMessages } from "./errorMessage";
 import { USER_SESSION_ID_PREFIX } from "../../constants/global-variables";
+import { yupSchemaValidation } from "../../yup.schema";
 
 const validateSchema = Yup.object().shape({
-	email: Yup.string().min(3).max(255).email(),
+	email: yupSchemaValidation.email,
 });
 
 export const resolvers: GQLResolverMap = {
@@ -24,7 +25,6 @@ export const resolvers: GQLResolverMap = {
 				const user = (await User.find({ where: { email } }))[0];
 
 				const passwordIsRight = await bcrypt.compare(password, user.password);
-				console.log(password, user.password, passwordIsRight);
 				if (!user || !passwordIsRight) {
 					throw new Error();
 				}

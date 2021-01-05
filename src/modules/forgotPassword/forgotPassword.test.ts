@@ -8,6 +8,7 @@ import { redis } from "../../helpers/redis";
 import { ErrorMessages } from "../login/errorMessage";
 import { forgotPasswordLockAccount } from "../../utils/forgotPasswordLockAccount";
 import { ErrorMessage } from "./ErrorMessage";
+import { ErrorMessages as LoginErrorMessage } from "../login/errorMessage";
 
 dotenv.config();
 
@@ -25,8 +26,10 @@ setupInitialization(() => {
 	});
 	describe("Forgot Password", () => {
 		test("Email is sent to user", async () => {
-			const res = await client?.sendForgotPasswordEmail(user?.email as string);
-			expect(res).toBeTruthy();
+			const {
+				data: { sendForgotPasswordEmail },
+			} = await client?.sendForgotPasswordEmail(user?.email as string);
+			expect(sendForgotPasswordEmail).toBeNull();
 		});
 		test("Email is not exist", async () => {
 			const {
@@ -38,6 +41,15 @@ setupInitialization(() => {
 					message: ErrorMessage.userIsNotExist,
 				},
 			]);
+		});
+		test("Account must be locked", async () => {
+			const res = (
+				await client?.login(mockCredential.email, mockCredential.password)
+			).data;
+			expect(res.login).toEqual({
+				message: LoginErrorMessage.forgotPasswordLock,
+				path: "email",
+			});
 		});
 		test("Make sure it works", async () => {
 			//lock account on forget password
@@ -54,6 +66,7 @@ setupInitialization(() => {
 			).data;
 			expect(res.forgotPasswordChange).toBeNull();
 		});
+
 		test("Login with new password", async () => {
 			const res = (
 				await client?.login(mockCredential.email, mockCredential.newPassword)

@@ -10,9 +10,10 @@ import { User } from "../../entity/User";
 import { formatYupErrors } from "../../utils/formatYupErrors";
 import { forgotPasswordLockAccount } from "../../utils/forgotPasswordLockAccount";
 import { ErrorMessage } from "./ErrorMessage";
+import { yupSchemaValidation } from "../../yup.schema";
 
 const validateSchema = Yup.object().shape({
-	password: Yup.string().min(3).max(255),
+	password: yupSchemaValidation.password,
 });
 
 export const resolvers: GQLResolverMap = {
@@ -52,6 +53,14 @@ export const resolvers: GQLResolverMap = {
 				return formatYupErrors(err);
 			}
 			const userId = await redis.get(`${FORGOT_PASSWORD_PREFIX}${key}`);
+			if (!userId) {
+				return [
+					{
+						path: "key",
+						message: ErrorMessage.expiredKeyError,
+					},
+				];
+			}
 			await User.update(
 				{ id: userId as string },
 				{

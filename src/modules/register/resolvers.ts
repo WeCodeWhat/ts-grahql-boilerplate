@@ -7,10 +7,11 @@ import {
 	createConfirmedEmailLink,
 	sendEmailToUser,
 } from "../../services/emailService";
+import { yupSchemaValidation } from "../../yup.schema";
 
 const validateSchema = Yup.object().shape({
-	email: Yup.string().min(3).max(255).email(),
-	password: Yup.string().min(3).max(255),
+	email: yupSchemaValidation.email,
+	password: yupSchemaValidation.password,
 });
 
 export const resolvers: GQLResolverMap = {
