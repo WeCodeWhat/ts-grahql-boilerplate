@@ -49,6 +49,8 @@ const startServer = async () => {
 
 	const connection = await createTypeormConn();
 	const environment = process.env.NODE_ENV;
+
+	if (environment == EnvironmentType.TEST) return redis.flushdb();
 	const isTesting = environment == EnvironmentType.TEST;
 	const app = await server.start({
 		cors: {
